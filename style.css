@@ -93,7 +93,63 @@ a { text-decoration: none; color: inherit; }
 ::-webkit-scrollbar { width: 4px; }
 ::-webkit-scrollbar-track { background: var(--bg); }
 ::-webkit-scrollbar-thumb { background: var(--gold); border-radius: 2px; }
+/* ── CSS Variables ── */
+:root {
+  /* Brand */
+  --gold:        #509368;
+  --gold-light:  #7ab894;
+  --gold-dark:   #3a6e4e;
+  --gold-glow:   rgba(80,147,104,0.12);
+  --gold-border: rgba(60,61,61,0.25);
 
+  /* Light Theme (default) */
+  --bg:          #F7F4F0;
+  --bg-2:        #EDEAE5;
+  --bg-3:        #E4E0D8;
+  --bg-4:        #D8D3CA;
+  --text:        black;
+  --text-sub:    rgba(26,26,26,0.72);
+  --text-muted:  #666666;
+  --border:      rgba(60,61,61,0.2);
+  --glass:       rgba(0,0,0,0.035);
+  --card-bg:     #EDEAE5;
+  --nav-bg:      rgba(247,244,240,0.94);
+  --overlay:     rgba(247,244,240,0.75);
+  --form-bg:     rgba(0,0,0,0.04);
+  --form-border: rgba(0,0,0,0.12);
+  --input-placeholder: rgba(0,0,0,0.3);
+  --shadow:      0 24px 60px rgba(0,0,0,0.12);
+
+  /* Typography */
+  --font-serif: 'Cormorant Garamond', Georgia, serif;
+  --font-sans:  'DM Sans', system-ui, sans-serif;
+
+  /* Transitions */
+  --ease: cubic-bezier(0.4,0,0.2,1);
+  --dur:  0.4s;
+}
+
+/* ── Dark Theme ── */
+[data-theme="dark"] {
+  --bg:          #0D0D0D;
+  --bg-2:        #161616;
+  --bg-3:        #1E1E1E;
+  --bg-4:        #2A2A2A;
+  --text:        #F5F2EE;
+  --text-sub:    rgba(245,242,238,0.72);
+  --text-muted:  #888888;
+  --border:      rgba(80,147,104,0.14);
+  --glass:       rgba(255,255,255,0.035);
+  --card-bg:     #161616;
+  --nav-bg:      rgba(13,13,13,0.92);
+  --overlay:     rgba(13,13,13,0.7);
+  --form-bg:     rgba(255,255,255,0.04);
+  --form-border: rgba(255,255,255,0.10);
+  --input-placeholder: rgba(255,255,255,0.25);
+  --shadow:      0 24px 60px rgba(0,0,0,0.5);
+  --gold-border: rgba(80,147,104,0.18);
+  --gold-glow:   rgba(80,147,104,0.18);
+}
 /* ── Custom Cursor ── */
 .cursor {
   position: fixed;
@@ -146,6 +202,12 @@ nav.scrolled {
   cursor: none;
   user-select: none;
 }
+
+.nav-logo img{
+  width: clamp(120px, 20vw, 180px);
+  height: auto;
+}
+
 .nav-logo span { color: var(--gold); }
 
 .nav-links {
@@ -169,6 +231,12 @@ nav.scrolled {
   display: flex;
   align-items: center;
   gap: 16px;
+}
+
+@media (max-width: 768px){
+  .nav-right{
+    display: none;
+  }
 }
 
 /* ── Theme Toggle ── */
@@ -234,45 +302,143 @@ nav.scrolled {
 }
 
 /* ── Mobile Nav ── */
+
 .mobile-nav {
   position: fixed;
   inset: 0;
   z-index: 1100;
-  background: var(--bg);
+
+  background: var(--nav-bg);
+  backdrop-filter: blur(20px);
+
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 28px;
+
+  gap: 34px;
+
   transform: translateX(100%);
-  transition: transform 0.45s var(--ease);
+  transition: transform 0.45s var(--ease), opacity .3s;
+
+  opacity: 0;
 }
-.mobile-nav.open { transform: translateX(0); }
+
+/* Open state */
+.mobile-nav.open {
+  transform: translateX(0);
+  opacity: 1;
+}
+
+/* ── Nav Links ── */
 .mobile-nav a {
+  position: relative;
+
   font-family: var(--font-serif);
-  font-size: 2.8rem;
+  font-size: 2.6rem;
   font-weight: 300;
+  letter-spacing: 0.02em;
+
   color: var(--text);
-  transition: color 0.3s;
+
+  transition: color .25s ease, transform .25s ease;
+
+  opacity: 0;
+  transform: translateY(20px);
 }
-.mobile-nav a:hover { color: var(--gold); }
+
+/* Animate links when menu opens */
+.mobile-nav.open a {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.mobile-nav.open a:nth-child(1) { transition-delay: .1s; }
+.mobile-nav.open a:nth-child(2) { transition-delay: .18s; }
+.mobile-nav.open a:nth-child(3) { transition-delay: .26s; }
+.mobile-nav.open a:nth-child(4) { transition-delay: .34s; }
+.mobile-nav.open a:nth-child(5) { transition-delay: .42s; }
+
+/* Hover underline animation */
+.mobile-nav a::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: -8px;
+
+  width: 0;
+  height: 1px;
+
+  background: var(--gold);
+  transition: width .3s ease;
+}
+
+.mobile-nav a:hover::after {
+  width: 100%;
+}
+
+.mobile-nav a:hover {
+  color: var(--gold);
+  transform: translateY(-2px);
+}
+
+/* ── Close Button ── */
 .mobile-nav-close {
   position: absolute;
-  top: 24px; right: 28px;
-  background: none;
-  border: none;
-  color: var(--text);
-  font-size: 1.4rem;
-  cursor: none;
-}
-.mobile-theme-row {
+  top: 28px;
+  right: 28px;
+
+  width: 40px;
+  height: 40px;
+
+  border-radius: 50%;
+
+  background: var(--bg-3);
+  border: 1px solid var(--border);
+
   display: flex;
   align-items: center;
-  gap: 12px;
-  font-size: 0.8rem;
-  color: var(--text-muted);
-  letter-spacing: 0.1em;
+  justify-content: center;
+
+  font-size: 1.1rem;
+  color: var(--text);
+
+  cursor: none;
+  transition: all .3s ease;
+}
+
+.mobile-nav-close:hover {
+  background: var(--gold);
+  color: #0D0D0D;
+  transform: rotate(90deg);
+}
+
+/* ── Theme Toggle Row ── */
+.mobile-theme-row {
+  margin-top: 30px;
+
+  display: flex;
+  align-items: center;
+  gap: 14px;
+
+  font-size: .75rem;
+  letter-spacing: .18em;
   text-transform: uppercase;
+
+  color: var(--text-muted);
+}
+
+/* subtle divider above theme switch */
+.mobile-theme-row::before {
+  content: "";
+  position: absolute;
+
+  width: 120px;
+  height: 1px;
+
+  background: var(--border);
+
+  transform: translateY(-30px);
 }
 
 /* ── Buttons ── */
